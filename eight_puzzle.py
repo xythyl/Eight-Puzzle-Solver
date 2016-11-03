@@ -65,27 +65,7 @@ def get_puzzle():
 
 def main():
   print ("Eight Puzzle Solver")
-  
-  first_row = input("Enter 1st row: ")
-  second_row = input("Enter 2nd row: ")
-  third_row = input("Enter 3rd row: ")
-  #first_row.strip()
-  #second_row.strip()
-  #third_row.strip()
-  row1=first_row.split(" ")
-  row2=second_row.split(" ")
-  row3=third_row.split(" ")
-  print ("You entered ")
-  print(first_row) 
-  print(second_row) 
-  print(third_row)
-  row1 = list(map(int,row1))
-  row2 = list(map(int,row2))
-  row3 = list(map(int,row3))
-  puzzle = []
-  puzzle.append(row1)
-  puzzle.append(row2)
-  puzzle.append(row3)
+  puzzle = get_puzzle()
   print(puzzle)
   print(puzzle[0])
   print(puzzle[1])
