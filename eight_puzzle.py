@@ -17,9 +17,10 @@ def general_search(problem, queueing_function):
     return node
   #end
 '''
+default = [[1,8,2],[0,4,3],[7,6,5]]
 
-def conv_2d_list(old_list):
-  new_list = []
+#converts a 2d list into a 1d list
+def conv_2d_list(old_list):   new_list = []
   for i in range(len(old_list)):
     for j in range(len(old_list[i])):
       new_list.append(old_list[i][j])
@@ -43,9 +44,15 @@ def check_solvable(state):
   return not(inversion_count % 2)
 
 def get_puzzle():
-  first_row = input("Enter 1st row: ")
-  second_row = input("Enter 2nd row: ")
-  third_row = input("Enter 3rd row: ")
+  first_row = []
+  second_row = []
+  third_row = []
+  while len(first_row) != 5:
+    first_row = input("Enter 1st row: ")
+  while len(second_row) != 5:
+    second_row = input("Enter 2nd row: ")
+  while len(third_row) != 5:
+    third_row = input("Enter 3rd row: ")
   row1=first_row.split(" ")
   row2=second_row.split(" ")
   row3=third_row.split(" ")
@@ -62,10 +69,24 @@ def get_puzzle():
   puzzle.append(row3)
   return puzzle
 
+def puzzle_prompt():
+  text = input("Type \"1\" to use default puzzle or \"2\" to enter a puzzle: ")
+  if len(text) > 1:
+    print ("Error input is not valid")
+    return puzzle_prompt()
+  else:
+    text = int(text)
+  if text == 1:
+    return default
+  elif text == 2:
+    return get_puzzle()
+  else:
+    print ("Error: input is not valid")
+    return puzzle_prompt()
 
 def main():
   print ("Eight Puzzle Solver")
-  puzzle = get_puzzle()
+  puzzle = puzzle_prompt()
   print(puzzle)
   print(puzzle[0])
   print(puzzle[1])
@@ -74,5 +95,6 @@ def main():
     print("puzzle is solvable")
   else:
     print ("puzzle is not solvable")
+    exit()
 
 main()
