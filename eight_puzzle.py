@@ -25,6 +25,10 @@ def conv_2d_list(old_list):
       new_list.append(old_list[i][j])
   return new_list
 
+'''
+reference from
+http://www.geeksforgeeks.org/check-instance-8-puzzle-solvable/
+'''
 def check_solvable(state):
   inversion_count = 0
   checked_list = conv_2d_list(state)
