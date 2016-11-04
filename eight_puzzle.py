@@ -24,13 +24,40 @@ class Node:
   def __init__(self, state, parent=None):
     self.STATE = state
     self.PARENT = parent
+    self.OPERATORS = [up,left,down,right]
     if parent is None:
       self.DEPTH = 0
     else:
       self.DEPTH = self.PARENT.DEPTH+1
 
-  def __getitem__(self, i):
+  def __getitem__(self, index):
     return self.STATE[index]
+
+  def __index__(self, item):
+    for i, j in enumerate(self.STATE):
+      if item in j:
+        return i, j.index(item)
+
+def up(state):
+  return
+
+def down(state):
+  return
+
+def left(state):
+  return
+
+def right(state):
+  return
+
+def expand(node, operators):
+  children = []
+  zero_index = node.STATE.index(0)
+  for o in operators:
+    child = o(node, zero_index)
+    if child:
+      children.append(child)
+  return children
 
 def misplaced_tiles_d(state): #datatype for state is a list
   misplaced_tiles = 0
@@ -45,13 +72,8 @@ def manhattan_d(state):
   for i in range(len(state)):
     for j in range(len(state[i])):
       if state[i][j] != 0:
-        #i_goal = (state[i][j]-1)//3
-        #j_goal = (state[i][j]-1)%3
         number_of_moves += (abs(i-((state[i][j]-1)//3)) + abs(j-((state[i][j]-1)%3)))
   return number_of_moves
-
-#distance += abs(x_value - x_goal) + abs(y_value - y_goal)
-
 
 #converts a 2d list into a 1d list
 def conv_2d_list(old_list):   
@@ -139,6 +161,7 @@ def main():
   #print(puzzle[2])
   print(misplaced_tiles_d(puzzle))
   print(manhattan_d(puzzle))
+  n = Node(puzzle)
   if check_solvable(puzzle):
     print("puzzle is solvable")
   else:
