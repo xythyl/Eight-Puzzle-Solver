@@ -24,7 +24,7 @@ class Node:
   def __init__(self, state, parent=None):
     self.STATE = state
     self.PARENT = parent
-    self.OPERATORS = [up,left,down,right]
+    self.ZERO_i, self.ZERO_j = self.index(0)
     if parent is None:
       self.DEPTH = 0
     else:
@@ -33,31 +33,86 @@ class Node:
   def __getitem__(self, index):
     return self.STATE[index]
 
-  def __index__(self, item):
+  def index(self, item):
     for i, j in enumerate(self.STATE):
       if item in j:
         return i, j.index(item)
 
-def up(state):
-  return
+  def print_puzzle(self):
+    print("-----")
+    for i in range(len(self.STATE)):
+      for j in range(len(self.STATE[i])):
+        print (str(self.STATE[i][j]) + " ", end="")
+      print ("")
+    print("-----")
 
-def down(state):
-  return
+  def state(self):
+    return self.STATE
 
-def left(state):
-  return
 
-def right(state):
-  return
+def up(node):
+  i, j = node.index(0)
+  newu = list(node.STATE)
+  if i == 0:
+    return 0
+  else:
+    newu[i][j], newu[i-1][j] = newu[i-1][j], newu[i][j]
+    return newu
 
-def expand(node, operators):
+def down(node):
+  i, j = node.index(0)
+  child = Node
+  newd = list(node.STATE)
+  if i == 2:
+    return 0
+  else:
+    newd[i][j], newd[i+1][j] = newd[i+1][j], newd[i][j]
+    return newd
+
+def left(node):
+  i, j = node.index(0)
+  newl = list(node.STATE)
+  if j == 0:
+    return 0
+  else:
+    newl[i][j], newl[i][j-1] = newl[i][j-1], newl[i][j]
+    return newl
+
+def right(node):
+  i, j = node.index(0)
+  newr = list(node.STATE)
+  if j == 2:
+    return 0
+  else:
+    newr[i][j], newr[i][j+1] = newr[i][j+1], newr[i][j]
+    return newr
+
+def expand(node):
   children = []
-  zero_index = node.STATE.index(0)
-  for o in operators:
-    child = o(node, zero_index)
-    if child:
-      children.append(child)
+  i, j = node.index(0)
+  if i != 0:
+    children.append(Node(up(node),node))
+  if i != 2:
+    children.append(Node(down(node),node))
+  if j != 0:
+    children.append(Node(left(node),node))
+  if j != 2:
+    children.append(Node(right(node),node))
   return children
+'''
+  child_up = Node(list(node),node)
+  if child_up.up():
+    children.append(child_up)
+  child_down = Node(list(node),node)
+  if child_down.down():
+    children.append(child_down)
+  child_left = Node(list(node),node)
+  if child_left.left():
+    children.append(child_left)
+  child_right = Node(list(node),node)
+  if child_right.right():
+    children.append(child_right)
+    '''
 
 def misplaced_tiles_d(state): #datatype for state is a list
   misplaced_tiles = 0
@@ -159,9 +214,15 @@ def main():
   #print(puzzle[0])
   #print(puzzle[1])
   #print(puzzle[2])
-  print(misplaced_tiles_d(puzzle))
-  print(manhattan_d(puzzle))
+  #print(misplaced_tiles_d(puzzle))
+  #print(manhattan_d(puzzle))
   n = Node(puzzle)
+  n.print_puzzle()
+  c = expand(n)
+  n.print_puzzle()
+  for o in c:
+    print("operator")
+    o.print_puzzle()
   if check_solvable(puzzle):
     print("puzzle is solvable")
   else:
