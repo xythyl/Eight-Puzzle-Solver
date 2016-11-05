@@ -17,8 +17,11 @@ def general_search(problem, queueing_function):
     return node
   #end
 '''
+from heapq import heappush, heappop
+
 default = [[1,8,2],[0,4,3],[7,6,5]]
 solution = [[1,2,3],[4,5,6],[7,8,0]]
+diameter = 31
 
 class Node:
   def __init__(self, state, parent=None):
@@ -44,6 +47,50 @@ class Node:
         print (str(self.STATE[i][j]) + " ", end="")
       print ("")
     print("-----")
+
+def search(problem, function):
+  #global maxq
+  #global expanded
+  #global diameter
+  maxq=0
+  nodes = []
+  closed = {}
+  heappush(nodes, [float('inf'), problem])
+ # heappush(nodes, [10,10])
+  #print(heappop(nodes))
+  while True:
+    if len(nodes) == 0:
+      return 0,0,0
+    maxq = max(maxq, len(nodes))
+    cost_node = heappop(nodes)
+    closed[tuple(conv_2d_list(cost_node[1].STATE))] = True
+    if function is 1:
+      print ("The best state to expand with a g(n) = %d and h(n) %d is: " % (cost_node[1].DEPTH, 0))
+    if function is 2:
+      print ("The best state to expand with a g(n) = %d and h(n) %d is: " % (cost_node[1].DEPTH, mtd(cost_node[1].STATE)))
+    else:
+      print ("The best state to expand with a g(n) = %d and h(n) %d is: " % (cost_node[1].DEPTH, mhd(cost_node[1].STATE)))
+    cost_node[1].print_puzzle()
+    print("Expanding node")
+
+    for child in expand(cost_node[1]):
+      #if not closed[tuple(conv_2d_list(child.STATE))]:
+      print("for loop")
+      if tuple(conv_2d_list(child.STATE)) not in closed:
+        print("first if")
+        if child.DEPTH <= diameter:
+          print ("second if")
+          if function is 1:
+            print("first!")
+            heappush(nodes, [child.DEPTH, child])
+          elif function is 2:
+            print("second!")
+            heappush(nodes, [child.DEPTH + mtd(child.STATE), child])
+          elif function is 3:
+            print("third!")
+            heappush(nodes, [child.DEPTH + mhd(child.STATE), child])
+      if check_solved(child):
+        return child, expanded, maxq
 
 def check_solved(node):
   if node.STATE == solution:
@@ -88,7 +135,7 @@ def expand(node):
     children.append(Node(right(node),node))
   return children
 
-def misplaced_tiles_d(state): #datatype for state is a list
+def mtd(state): #datatype for state is a list
   misplaced_tiles = 0
   for i in range(len(state)):
     for j in range(len(state[i])):
@@ -96,7 +143,7 @@ def misplaced_tiles_d(state): #datatype for state is a list
         misplaced_tiles += 1
   return misplaced_tiles
 
-def manhattan_d(state):
+def mhd(state): #datatype for state is a list
   number_of_moves = 0
   for i in range(len(state)):
     for j in range(len(state[i])):
@@ -191,7 +238,7 @@ def select_algorithm():
 def main():
   print ("Eight Puzzle Solver")
   puzzle = puzzle_prompt()
-  select_algorithm()
+  #select_algorithm()
   #print(puzzle)
   #print(puzzle[0])
   #print(puzzle[1])
@@ -199,9 +246,14 @@ def main():
   #print(misplaced_tiles_d(puzzle))
   #print(manhattan_d(puzzle))
   n = Node(puzzle)
-  n.print_puzzle()
-  c = expand(n)
-  n.print_puzzle()
+  h,j,k = search(n,select_algorithm())
+  print(h)
+  print(j)
+  print(k)
+  #n.print_puzzle()
+  #c = expand(n)
+  #n.print_puzzle()
+  '''
   for o in c:
     print("operator")
     o.print_puzzle()
@@ -210,5 +262,5 @@ def main():
   else:
     print ("puzzle is not solvable")
     exit()
-
+  '''
 main()
