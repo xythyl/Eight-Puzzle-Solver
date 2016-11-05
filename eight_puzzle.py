@@ -24,7 +24,6 @@ class Node:
   def __init__(self, state, parent=None):
     self.STATE = state
     self.PARENT = parent
-    self.ZERO_i, self.ZERO_j = self.index(0)
     if parent is None:
       self.DEPTH = 0
     else:
@@ -46,46 +45,35 @@ class Node:
       print ("")
     print("-----")
 
-  def state(self):
-    return self.STATE
-
+def check_solved(node):
+  if node.STATE == solution:
+    return True
+  else:
+    return False
 
 def up(node):
   i, j = node.index(0)
-  newu = list(node.STATE)
-  if i == 0:
-    return 0
-  else:
-    newu[i][j], newu[i-1][j] = newu[i-1][j], newu[i][j]
-    return newu
+  newu = list_2_list(node.STATE)
+  newu[i][j], newu[i-1][j] = newu[i-1][j], newu[i][j]
+  return newu
 
 def down(node):
   i, j = node.index(0)
-  child = Node
-  newd = list(node.STATE)
-  if i == 2:
-    return 0
-  else:
-    newd[i][j], newd[i+1][j] = newd[i+1][j], newd[i][j]
-    return newd
+  newd = list_2_list(node.STATE)
+  newd[i][j], newd[i+1][j] = newd[i+1][j], newd[i][j]
+  return newd
 
 def left(node):
   i, j = node.index(0)
-  newl = list(node.STATE)
-  if j == 0:
-    return 0
-  else:
-    newl[i][j], newl[i][j-1] = newl[i][j-1], newl[i][j]
-    return newl
+  newl = list_2_list(node.STATE)
+  newl[i][j], newl[i][j-1] = newl[i][j-1], newl[i][j]
+  return newl
 
 def right(node):
   i, j = node.index(0)
-  newr = list(node.STATE)
-  if j == 2:
-    return 0
-  else:
-    newr[i][j], newr[i][j+1] = newr[i][j+1], newr[i][j]
-    return newr
+  newr = list_2_list(node.STATE)
+  newr[i][j], newr[i][j+1] = newr[i][j+1], newr[i][j]
+  return newr
 
 def expand(node):
   children = []
@@ -99,20 +87,6 @@ def expand(node):
   if j != 2:
     children.append(Node(right(node),node))
   return children
-'''
-  child_up = Node(list(node),node)
-  if child_up.up():
-    children.append(child_up)
-  child_down = Node(list(node),node)
-  if child_down.down():
-    children.append(child_down)
-  child_left = Node(list(node),node)
-  if child_left.left():
-    children.append(child_left)
-  child_right = Node(list(node),node)
-  if child_right.right():
-    children.append(child_right)
-    '''
 
 def misplaced_tiles_d(state): #datatype for state is a list
   misplaced_tiles = 0
@@ -136,6 +110,14 @@ def conv_2d_list(old_list):
   for i in range(len(old_list)):
     for j in range(len(old_list[i])):
       new_list.append(old_list[i][j])
+  return new_list
+  
+#converts a 2d list to a 2d list to avoid making a pointer
+def list_2_list(old_list):   
+  new_list = [[0,0,0],[0,0,0],[0,0,0]]
+  for i in range(len(old_list)):
+    for j in range(len(old_list[i])):
+      new_list[i][j] = old_list[i][j]
   return new_list
 
 '''
