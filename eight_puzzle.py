@@ -4,19 +4,6 @@
   Matthew Lauhakamin
   mlauh001@ucr.edu
 '''
-
-'''
-def general_search(problem, queueing_function):
-  nodes = make_queue(make_node(problem.initial_state))
-  loop do 
-  if empty(nodes) 
-    node = remove_front(nodes)
-    return "failure"
-  if problem.goal_test(node.state)
-    nodes = queueing_function(nodes, expand(node, problem.operators))
-    return node
-  #end
-'''
 from heapq import heappush, heappop
 
 default = [[1,8,2],[0,4,3],[7,6,5]]
@@ -31,6 +18,9 @@ class Node:
       self.DEPTH = 0
     else:
       self.DEPTH = self.PARENT.DEPTH+1
+
+  def __lt__(self, other):
+    return self.STATE < other.STATE
 
   def __getitem__(self, index):
     return self.STATE[index]
@@ -49,45 +39,38 @@ class Node:
     print("-----")
 
 def search(problem, function):
-  #global maxq
-  #global expanded
-  #global diameter
+  expanded = 0
   maxq=0
   nodes = []
   closed = {}
-  heappush(nodes, (float('inf'), problem))
+  heappush(nodes, [float('inf'), problem])
   while True:
     if len(nodes) == 0:
       return 0,0,0
     maxq = max(maxq, len(nodes))
     cost_node = heappop(nodes)
     closed[tuple(conv_2d_list(cost_node[1].STATE))] = True
-    if function is 1:
+    if function == 1:
       print ("The best state to expand with a g(n) = %d and h(n) %d is: " % (cost_node[1].DEPTH, 0))
-    if function is 2:
+    elif function == 2:
       print ("The best state to expand with a g(n) = %d and h(n) %d is: " % (cost_node[1].DEPTH, mtd(cost_node[1].STATE)))
-    else:
+    elif function == 3:
       print ("The best state to expand with a g(n) = %d and h(n) %d is: " % (cost_node[1].DEPTH, mhd(cost_node[1].STATE)))
     cost_node[1].print_puzzle()
-    print("Expanding node")
+    print("Expanding this node")
 
     for child in expand(cost_node[1]):
-      print("for loop")
       if tuple(conv_2d_list(child.STATE)) not in closed:
-        print("first if")
         if child.DEPTH <= diameter:
-          print ("second if")
           if function == 1:
-            print("first!")
-            heappush(nodes, (child.DEPTH, child))
+            heappush(nodes, [child.DEPTH, child])
           elif function == 2:
-            print("second!")
-            heappush(nodes, (child.DEPTH + mtd(child.STATE), child))
-          else:
-            print("third!")
-            heappush(nodes, (child.DEPTH + mhd(child.STATE), child))
+            heappush(nodes, [child.DEPTH + mtd(child.STATE), child])
+          elif function == 3:
+            heappush(nodes, [child.DEPTH + mhd(child.STATE), child])
+          expanded += 1
       if check_solved(child):
-        print("solved if")
+        print("Goal!")
         return child, expanded, maxq
 
 def check_solved(node):
@@ -236,21 +219,11 @@ def select_algorithm():
 def main():
   print ("Eight Puzzle Solver")
   puzzle = puzzle_prompt()
-  #select_algorithm()
-  #print(puzzle)
-  #print(puzzle[0])
-  #print(puzzle[1])
-  #print(puzzle[2])
-  #print(misplaced_tiles_d(puzzle))
-  #print(manhattan_d(puzzle))
   n = Node(puzzle)
   h,j,k = search(n,int(select_algorithm()))
-  print(h)
-  print(j)
-  print(k)
-  #n.print_puzzle()
-  #c = expand(n)
-  #n.print_puzzle()
+  print("Depth of goal: " + str(h.DEPTH))
+  print("Total # of expanded nodes: " + str(j))
+  print("Max queue size: " + str(k))
   '''
   for o in c:
     print("operator")
