@@ -55,9 +55,7 @@ def search(problem, function):
   maxq=0
   nodes = []
   closed = {}
-  heappush(nodes, [float('inf'), problem])
- # heappush(nodes, [10,10])
-  #print(heappop(nodes))
+  heappush(nodes, (float('inf'), problem))
   while True:
     if len(nodes) == 0:
       return 0,0,0
@@ -74,22 +72,22 @@ def search(problem, function):
     print("Expanding node")
 
     for child in expand(cost_node[1]):
-      #if not closed[tuple(conv_2d_list(child.STATE))]:
       print("for loop")
       if tuple(conv_2d_list(child.STATE)) not in closed:
         print("first if")
         if child.DEPTH <= diameter:
           print ("second if")
-          if function is 1:
+          if function == 1:
             print("first!")
-            heappush(nodes, [child.DEPTH, child])
-          elif function is 2:
+            heappush(nodes, (child.DEPTH, child))
+          elif function == 2:
             print("second!")
-            heappush(nodes, [child.DEPTH + mtd(child.STATE), child])
-          elif function is 3:
+            heappush(nodes, (child.DEPTH + mtd(child.STATE), child))
+          else:
             print("third!")
-            heappush(nodes, [child.DEPTH + mhd(child.STATE), child])
+            heappush(nodes, (child.DEPTH + mhd(child.STATE), child))
       if check_solved(child):
+        print("solved if")
         return child, expanded, maxq
 
 def check_solved(node):
@@ -246,7 +244,7 @@ def main():
   #print(misplaced_tiles_d(puzzle))
   #print(manhattan_d(puzzle))
   n = Node(puzzle)
-  h,j,k = search(n,select_algorithm())
+  h,j,k = search(n,int(select_algorithm()))
   print(h)
   print(j)
   print(k)
