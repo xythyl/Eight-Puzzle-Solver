@@ -42,14 +42,14 @@ def search(problem, function):
   expanded = 0
   maxq=0
   nodes = []
-  closed = {}
+  visited = {}
   heappush(nodes, [float('inf'), problem])
   while True:
     if len(nodes) == 0:
       return 0,0,0
     maxq = max(maxq, len(nodes))
     cost_node = heappop(nodes)
-    closed[tuple(conv_2d_list(cost_node[1].STATE))] = True
+    visited[tuple(conv_2d_list(cost_node[1].STATE))] = True
     if function == 1:
       print ("The best state to expand with a g(n) = %d and h(n) %d is: " % (cost_node[1].DEPTH, 0))
     elif function == 2:
@@ -60,7 +60,7 @@ def search(problem, function):
     print("Expanding this node")
 
     for child in expand(cost_node[1]):
-      if tuple(conv_2d_list(child.STATE)) not in closed:
+      if tuple(conv_2d_list(child.STATE)) not in visited:
         if child.DEPTH <= diameter:
           if function == 1:
             heappush(nodes, [child.DEPTH, child])
@@ -160,7 +160,6 @@ def check_solvable(state):
     for j in range(i, len(checked_list)):
       if checked_list[i] > checked_list[j]:
         inversion_count += 1
-  #print('Inversion count is: ' + str(inversion_count))
   return not(inversion_count % 2)
 
 def get_puzzle():
@@ -219,19 +218,14 @@ def select_algorithm():
 def main():
   print ("Eight Puzzle Solver")
   puzzle = puzzle_prompt()
+  if not check_solvable(puzzle):
+    print("Not Solvable")
+    print(mhd(puzzle))
+    exit()
   n = Node(puzzle)
   h,j,k = search(n,int(select_algorithm()))
   print("Depth of goal: " + str(h.DEPTH))
   print("Total # of expanded nodes: " + str(j))
   print("Max queue size: " + str(k))
-  '''
-  for o in c:
-    print("operator")
-    o.print_puzzle()
-  if check_solvable(puzzle):
-    print("puzzle is solvable")
-  else:
-    print ("puzzle is not solvable")
-    exit()
-  '''
+
 main()
