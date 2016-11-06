@@ -166,6 +166,7 @@ def get_puzzle():
   first_row = []
   second_row = []
   third_row = []
+  print("Enter numbers serperated by a space. Example: \'1 2 3\'")
   while len(first_row) != 5:
     first_row = input("Enter 1st row: ")
   while len(second_row) != 5:
