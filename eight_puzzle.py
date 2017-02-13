@@ -7,7 +7,6 @@
 from heapq import heappush, heappop
 
 default = [[1,8,2],[0,4,3],[7,6,5]]
-solution = [[1,2,3],[4,5,6],[7,8,0]]
 diameter = 31
 
 class Node:
@@ -38,6 +37,14 @@ class Node:
       print ("")
     print("-----")
 
+def print_p(state):
+  print("-----")
+  for i in range(len(state)):
+    for j in range(len(state[i])):
+      print (str(state[i][j]) + " ", end="")
+    print ("")
+  print("-----")
+
 def search(problem, function):
   expanded = 0
   maxq=0
@@ -50,14 +57,14 @@ def search(problem, function):
     maxq = max(maxq, len(nodes))
     cost_node = heappop(nodes)
     visited[tuple(conv_2d_list(cost_node[1].STATE))] = True
-    if function == 1:
-      print ("The best state to expand with a g(n) = %d and h(n) %d is: " % (cost_node[1].DEPTH, 0))
-    elif function == 2:
-      print ("The best state to expand with a g(n) = %d and h(n) %d is: " % (cost_node[1].DEPTH, mtd(cost_node[1].STATE)))
-    elif function == 3:
-      print ("The best state to expand with a g(n) = %d and h(n) %d is: " % (cost_node[1].DEPTH, mhd(cost_node[1].STATE)))
-    cost_node[1].print_puzzle()
-    print("Expanding this node")
+    #if function == 1:
+      #print ("The best state to expand with a g(n) = %d and h(n) %d is: " % (cost_node[1].DEPTH, 0))
+    #elif function == 2:
+      #print ("The best state to expand with a g(n) = %d and h(n) %d is: " % (cost_node[1].DEPTH, mtd(cost_node[1].STATE)))
+    #elif function == 3:
+      #print ("The best state to expand with a g(n) = %d and h(n) %d is: " % (cost_node[1].DEPTH, mhd(cost_node[1].STATE)))
+    #cost_node[1].print_puzzle()
+    #print("Expanding this node")
 
     for child in expand(cost_node[1]):
       if tuple(conv_2d_list(child.STATE)) not in visited:
@@ -70,6 +77,26 @@ def search(problem, function):
             heappush(nodes, [child.DEPTH + mhd(child.STATE), child])
           expanded += 1
       if check_solved(child):
+        #cost_node = heappop(nodes)
+        #cost_node[1].print_puzzle()
+        #t = []
+        #t.append(child)
+        #n = child.PARENT
+        #while n.PARENT is not None:
+        #  t.append(n)
+        #  n = n.PARENT
+        #t.append(n)
+        #t.reverse()
+        #for node in t[:len(t)-1]:       
+        #  print ("Expanding node with g(n) = %d and h(n) = " % n.DEPTH,)
+        #  if function == 1:
+        #    print ("0")
+        #  elif function == 2:
+        #    print (mtd(n.STATE))
+        #  else:
+        #    print (mhd(n.STATE))
+        #  print_p(n.STATE)
+        #print_p(t[(len(t)-1)].STATE)
         print("Goal!")
         return child, expanded, maxq
 
@@ -204,6 +231,24 @@ def puzzle_prompt():
     print ("Error: input is not valid")
     return puzzle_prompt()
 
+def goal_state_prompt():
+  solution = [[1,2,3],[4,5,6],[7,8,0]]
+  print("The default goal state is:")
+  print(solution[0])
+  print(solution[1])
+  print(solution[2])
+  s = input("Press \"1\" to keep goal state or \"2\" to input a custom goal state: ")
+  if s not in ['1','2']:
+    print ("Error: incorrect number selected\n")
+    return goal_state_prompt()
+  if s is '2':
+    solution = get_puzzle()
+    print("The new goal state is:")
+    print(solution[0])
+    print(solution[1])
+    print(solution[2])
+  return solution
+
 def select_algorithm():
   print ("Enter you choice of algorithm")
   print ("1. Uniform Cost Search")
@@ -219,14 +264,53 @@ def select_algorithm():
 def main():
   print ("Eight Puzzle Solver")
   puzzle = puzzle_prompt()
+  #print("Actual solution")
+  #print(solution[0])
+  #print(solution[1])
+  #print(solution[2])
   if not check_solvable(puzzle):
     print("Not Solvable")
-    print(mhd(puzzle))
-    exit()
   n = Node(puzzle)
-  h,j,k = search(n,int(select_algorithm()))
+  print ("Solving ")
+  n.print_puzzle()
+  function = select_algorithm()
+  h,j,k = search(n,int(function))
+
+
+  #x = input(' Print Solution Trace? ')
+  #if x:
+    #if x[0] == 'y' or x[0] == 'Y':
+  trace = []
+  trace.append(h)
+  node = h.PARENT
+  while node.PARENT is not None:
+    trace.append(node)
+    node = node.PARENT
+  trace.append(node)
+  trace.reverse()
+  for node in trace[:len(trace)-1]:
+    print ("Expanding node with g(n) = %d and h(n) = " % node.DEPTH, end="")
+    if function == '1':
+      print ("0")
+    elif function == '2':
+      print (str(mtd(node.STATE)))
+    else:
+      print (str(mhd(node.STATE)))
+    print_p(node.STATE)
+  print_p(trace[len(trace)-1].STATE)
+  print ("\n\nGoal!")
+  #print ("\nTo solve this problem the search algorithm expanded a total number of %d nodes." % j)
+  #print ("The maximum number of nodes in the queue at any one time was %i" % k)
+  #print ("The depth of the goal node was %d" % h.DEPTH)
+    
+  #print ('Done')
+
   print("Depth of goal: " + str(h.DEPTH))
   print("Total # of expanded nodes: " + str(j))
   print("Max queue size: " + str(k))
+  print("Done")
 
+solution = goal_state_prompt()
 main()
+
+
